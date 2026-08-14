@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopNest — Simple E-Commerce</title>
+  <style>
+    :root{--primary:#d96b96;--dark:#2f1722;--muted:#7a6570;--bg:#fff8fb;--card:#fff;--line:#f1dce5;--accent:#b94f79}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--dark)}
+    button,input,select{font:inherit}.container{width:min(1120px,92%);margin:auto}
+    header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .nav{height:72px;display:flex;align-items:center;gap:24px}.logo{font-size:23px;font-weight:900;color:var(--primary);text-decoration:none}.logo span{color:var(--accent)}
+    .search{flex:1;position:relative}.search input{width:100%;padding:12px 16px 12px 42px;border:1px solid var(--line);border-radius:999px;outline:none;background:#f8fafc}.search input:focus{border-color:#e7a4bd;background:white}
+    .search-icon{position:absolute;left:15px;top:11px}.cart-btn{border:0;background:var(--dark);color:#fff;border-radius:999px;padding:11px 16px;cursor:pointer;font-weight:700}
+    .hero{margin:34px 0 26px;border-radius:28px;overflow:hidden;background:linear-gradient(135deg,#fde7f0,#fff5f8 48%,#fce7f3);padding:52px 7%;display:flex;justify-content:space-between;align-items:center;gap:25px}
+    .hero h1{font-size:clamp(34px,6vw,62px);line-height:1;margin:0 0 16px;max-width:650px;letter-spacing:-2px}.hero p{font-size:17px;color:#475569;max-width:560px;line-height:1.6}
+    .hero .cta{display:inline-block;margin-top:12px;background:var(--primary);color:white;padding:13px 20px;border-radius:12px;text-decoration:none;font-weight:800}.hero-art{font-size:100px;filter:drop-shadow(0 18px 20px rgba(15,23,42,.15))}
+    .section-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:32px 0 18px}.section-head h2{margin:0;font-size:26px}.filters{display:flex;gap:10px}.filters select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:white}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.product{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.2s}.product:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(15,23,42,.08)}
+    .pic{height:190px;display:grid;place-items:center;font-size:70px;background:linear-gradient(135deg,#e0f2fe,#f8fafc)}.product:nth-child(3n) .pic{background:linear-gradient(135deg,#ffedd5,#fff7ed)}.product:nth-child(4n) .pic{background:linear-gradient(135deg,#dcfce7,#f0fdf4)}
+    .info{padding:16px}.tag{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}.name{font-weight:800;margin:6px 0}.price{font-weight:900;font-size:19px}.buy{width:100%;margin-top:12px;padding:11px;border:0;border-radius:10px;background:#fff0f5;color:#be4771;font-weight:800;cursor:pointer}.buy:hover{background:#f9d9e6}
+    .empty{text-align:center;padding:55px 10px;color:var(--muted);grid-column:1/-1}.about{margin:55px 0;background:white;border:1px solid var(--line);border-radius:20px;padding:30px;line-height:1.7;color:#475569}
+    footer{margin-top:50px;background:var(--dark);color:#cbd5e1;padding:28px 0;text-align:center}.footer-brand{font-weight:900;color:white;font-size:20px}
+    .overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:40;display:none}.overlay.show{display:block}.cart{position:fixed;right:0;top:0;height:100%;width:min(420px,92vw);background:white;z-index:50;transform:translateX(100%);transition:.25s;padding:22px;display:flex;flex-direction:column}.cart.open{transform:translateX(0)}
+    .cart-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:15px}.close{border:0;background:#f1f5f9;border-radius:50%;width:36px;height:36px;cursor:pointer}.cart-items{flex:1;overflow:auto;padding:10px 0}.cart-row{display:grid;grid-template-columns:55px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #f1f5f9}.thumb{width:55px;height:55px;border-radius:12px;display:grid;place-items:center;background:#f1f5f9;font-size:28px}.qty{display:flex;align-items:center;gap:7px;margin-top:6px}.qty button{border:1px solid var(--line);background:white;border-radius:7px;width:25px;height:25px;cursor:pointer}.remove{border:0;background:none;color:#ef4444;cursor:pointer;font-size:12px}.cart-total{border-top:1px solid var(--line);padding-top:16px}.checkout{width:100%;border:0;background:var(--dark);color:white;padding:13px;border-radius:11px;font-weight:800;cursor:pointer;margin-top:10px}
+    .toast{position:fixed;bottom:25px;left:50%;transform:translate(-50%,20px);background:var(--dark);color:#fff;padding:12px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:100}.toast.show{opacity:1;transform:translate(-50%,0)}
+
+    .auth-actions{display:flex;align-items:center;gap:8px}.auth-btn{border:1px solid #f3c5d6;background:white;color:#be4771;padding:9px 13px;border-radius:10px;font-weight:800;cursor:pointer}.auth-btn.primary{background:#d96b96;color:white;border-color:#d96b96}
+    .user-menu{display:none;align-items:center;gap:8px}.user-name{font-weight:800;color:#8f3d60}.logout{border:0;background:#fff0f5;color:#be4771;padding:9px 12px;border-radius:10px;font-weight:800;cursor:pointer}
+    .modal{position:fixed;inset:0;background:rgba(47,23,34,.48);display:none;align-items:center;justify-content:center;z-index:80;padding:18px}.modal.show{display:flex}.modal-card{width:min(430px,100%);background:#fff;border-radius:22px;padding:28px;box-shadow:0 25px 70px rgba(0,0,0,.2);position:relative}.modal-card h2{margin:0 0 7px}.modal-card p{color:#64748b;margin:0 0 20px}.modal-card label{display:block;font-size:13px;font-weight:800;margin:12px 0 6px}.modal-card input{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;outline:none}.modal-card input:focus{border-color:#e7a4bd;box-shadow:0 0 0 3px #fff0f5}.modal-submit{width:100%;margin-top:18px;border:0;border-radius:11px;padding:13px;background:#d96b96;color:white;font-weight:900;cursor:pointer}.switch-auth{text-align:center;margin-top:16px;font-size:14px;color:#64748b}.switch-auth button{border:0;background:none;color:#be4771;font-weight:900;cursor:pointer}.modal-close{position:absolute;right:16px;top:16px;border:0;background:#fff0f5;color:#be4771;border-radius:50%;width:34px;height:34px;cursor:pointer}
+
+    @media(max-width:900px){.grid{grid-template-columns:repeat(3,1fr)}.hero-art{font-size:75px}}
+    @media(max-width:680px){.nav{gap:10px}.search{display:none}.hero{padding:34px 7%}.hero-art{display:none}.grid{grid-template-columns:repeat(2,1fr)}.section-head{align-items:flex-start;flex-direction:column}}
+    @media(max-width:430px){.grid{grid-template-columns:1fr}.pic{height:210px}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a class="logo" href="#">Shop<span>Nest</span></a>
+    <div class="search"><span class="search-icon">🔎</span><input id="search" type="search" placeholder="Search products..."></div>
+    <div class="auth-actions" id="authActions">
+      <button class="auth-btn" onclick="openAuth('login')">Log in</button>
+      <button class="auth-btn primary" onclick="openAuth('register')">Register</button>
+    </div>
+    <div class="user-menu" id="userMenu">
+      <span class="user-name" id="userName"></span>
+      <button class="logout" onclick="logout()">Log out</button>
+    </div>
+    <button class="cart-btn" onclick="openCart()">🛒 Cart (<span id="count">0</span>)</button>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div>
+      <div class="tag">Simple • Fast • No Database</div>
+      <h1>Find something you’ll love.</h1>
+      <p>A clean e-commerce demo built with only HTML, CSS and JavaScript. Products and cart data run in the browser using localStorage.</p>
+      <a class="cta" href="#products">Shop now →</a>
+    </div>
+    <div class="hero-art">🛍️</div>
+  </section>
+
+  <section id="products">
+    <div class="section-head">
+      <h2>Featured Products</h2>
+      <div class="filters">
+        <select id="category">
+          <option value="All">All categories</option>
+          <option>Fashion</option><option>Tech</option><option>Home</option><option>Beauty</option>
+        </select>
+        <select id="sort">
+          <option value="default">Sort</option><option value="low">Price: Low</option><option value="high">Price: High</option>
+        </select>
+      </div>
+    </div>
+    <div id="grid" class="grid"></div>
+  </section>
+
+  <section class="about">
+    <h2>About ShopNest</h2>
+    <p>This is a static e-commerce website suitable for GitHub Pages. It has no server, API, or database. The cart is saved locally in the visitor’s browser, so it works even without a backend.</p>
+  </section>
+</main>
+
+<footer><div class="footer-brand">ShopNest</div><div>© 2026 ShopNest • Static GitHub Pages Demo</div></footer>
+
+<div id="overlay" class="overlay" onclick="closeCart()"></div>
+<aside id="cart" class="cart">
+  <div class="cart-head"><h2>Shopping Cart</h2><button class="close" onclick="closeCart()">✕</button></div>
+  <div id="cartItems" class="cart-items"></div>
+  <div class="cart-total"><div style="display:flex;justify-content:space-between;font-weight:900;font-size:19px"><span>Total</span><span id="total">₱0</span></div><button class="checkout" onclick="checkout()">Proceed to Checkout</button></div>
+</aside>
+
+<div id="authModal" class="modal" onclick="if(event.target===this)closeAuth()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <h2 id="authTitle">Welcome back</h2>
+    <p id="authSubtitle">Log in to continue shopping.</p>
+    <form id="authForm" onsubmit="handleAuth(event)">
+      <div id="nameField" style="display:none">
+        <label>Full Name</label>
+        <input id="fullName" type="text" placeholder="Enter your name">
+      </div>
+      <label>Email</label>
+      <input id="email" type="email" placeholder="you@example.com" required>
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Enter your password" required minlength="4">
+      <button class="modal-submit" id="authSubmit">Log in</button>
+    </form>
+    <div class="switch-auth"><span id="switchText">Don't have an account?</span> <button id="switchBtn" onclick="switchAuth()">Register</button></div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Added to cart!</div>
+
+<script>
+const products=[
+ {id:1,name:"Classic Sneakers",cat:"Fashion",price:1299,emoji:"👟"},
+ {id:2,name:"Wireless Headphones",cat:"Tech",price:1899,emoji:"🎧"},
+ {id:3,name:"Minimal Backpack",cat:"Fashion",price:999,emoji:"🎒"},
+ {id:4,name:"Smart Watch",cat:"Tech",price:2499,emoji:"⌚"},
+ {id:5,name:"Desk Lamp",cat:"Home",price:799,emoji:"💡"},
+ {id:6,name:"Ceramic Mug",cat:"Home",price:399,emoji:"☕"},
+ {id:7,name:"Skin Care Set",cat:"Beauty",price:1099,emoji:"🧴"},
+ {id:8,name:"Sunglasses",cat:"Fashion",price:699,emoji:"🕶️"}
+];
+let cart=JSON.parse(localStorage.getItem("shopnest-cart")||"[]");
+
+const peso=n=>"₱"+n.toLocaleString("en-PH");
+function render(){
+ const q=document.getElementById("search").value.toLowerCase();
+ const cat=document.getElementById("category").value;
+ const sort=document.getElementById("sort").value;
+ let list=products.filter(p=>(cat==="All"||p.cat===cat)&&p.name.toLowerCase().includes(q));
+ if(sort==="low")list.sort((a,b)=>a.price-b.price);
+ if(sort==="high")list.sort((a,b)=>b.price-a.price);
+ document.getElementById("grid").innerHTML=list.length?list.map(p=>`
+  <article class="product"><div class="pic">${p.emoji}</div><div class="info">
+   <div class="tag">${p.cat}</div><div class="name">${p.name}</div><div class="price">${peso(p.price)}</div>
+   <button class="buy" onclick="add(${p.id})">Add to Cart</button>
+  </div></article>`).join(""):`<div class="empty">No products found. Try another search.</div>`;
+}
+function save(){localStorage.setItem("shopnest-cart",JSON.stringify(cart));updateCart()}
+function add(id){const item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1});save();toast("Added to cart!")}
+function change(id,delta){const item=cart.find(x=>x.id===id);if(!item)return;item.qty+=delta;if(item.qty<=0)cart=cart.filter(x=>x.id!==id);save()}
+function removeItem(id){cart=cart.filter(x=>x.id!==id);save()}
+function updateCart(){
+ let total=0,count=0;
+ const box=document.getElementById("cartItems");
+ if(!cart.length)box.innerHTML='<div class="empty">Your cart is empty 🛒</div>';
+ else box.innerHTML=cart.map(i=>{const p=products.find(x=>x.id===i.id);total+=p.price*i.qty;count+=i.qty;return `
+ <div class="cart-row"><div class="thumb">${p.emoji}</div><div><b>${p.name}</b><div class="qty"><button onclick="change(${p.id},-1)">−</button><span>${i.qty}</span><button onclick="change(${p.id},1)">+</button></div></div><div><b>${peso(p.price*i.qty)}</b><br><button class="remove" onclick="removeItem(${p.id})">Remove</button></div></div>`}).join("");
+ document.getElementById("count").textContent=count;document.getElementById("total").textContent=peso(total);
+}
+function openCart(){document.getElementById("cart").classList.add("open");document.getElementById("overlay").classList.add("show")}
+function closeCart(){document.getElementById("cart").classList.remove("open");document.getElementById("overlay").classList.remove("show")}
+function checkout(){if(!cart.length){toast("Your cart is empty.");return}alert("Demo checkout only — no payment or database is connected.");}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1600)}
+["search","category","sort"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+
+let authMode="login";
+function openAuth(mode="login"){
+  authMode=mode; updateAuthModal();
+  document.getElementById("authModal").classList.add("show");
+}
+function closeAuth(){document.getElementById("authModal").classList.remove("show")}
+function switchAuth(){authMode=authMode==="login"?"register":"login";updateAuthModal()}
+function updateAuthModal(){
+  const register=authMode==="register";
+  document.getElementById("authTitle").textContent=register?"Create your account":"Welcome back";
+  document.getElementById("authSubtitle").textContent=register?"Register to start shopping with ShopNest.":"Log in to continue shopping.";
+  document.getElementById("nameField").style.display=register?"block":"none";
+  document.getElementById("fullName").required=register;
+  document.getElementById("authSubmit").textContent=register?"Create account":"Log in";
+  document.getElementById("switchText").textContent=register?"Already have an account?":"Don't have an account?";
+  document.getElementById("switchBtn").textContent=register?"Log in":"Register";
+}
+function getUsers(){return JSON.parse(localStorage.getItem("shopnest-users")||"[]")}
+function handleAuth(e){
+  e.preventDefault();
+  const email=document.getElementById("email").value.trim().toLowerCase();
+  const password=document.getElementById("password").value;
+  const users=getUsers();
+  if(authMode==="register"){
+    const name=document.getElementById("fullName").value.trim();
+    if(users.some(u=>u.email===email)){toast("Email is already registered.");return}
+    users.push({name,email,password});
+    localStorage.setItem("shopnest-users",JSON.stringify(users));
+    localStorage.setItem("shopnest-current",JSON.stringify({name,email}));
+    closeAuth();updateUser();toast("Account created successfully!");
+  }else{
+    const user=users.find(u=>u.email===email&&u.password===password);
+    if(!user){toast("Incorrect email or password.");return}
+    localStorage.setItem("shopnest-current",JSON.stringify({name:user.name,email:user.email}));
+    closeAuth();updateUser();toast("Welcome back, "+user.name+"!");
+  }
+  document.getElementById("authForm").reset();
+}
+function updateUser(){
+  const current=JSON.parse(localStorage.getItem("shopnest-current")||"null");
+  document.getElementById("authActions").style.display=current?"none":"flex";
+  document.getElementById("userMenu").style.display=current?"flex":"none";
+  if(current)document.getElementById("userName").textContent="Hi, "+current.name;
+}
+function logout(){
+  localStorage.removeItem("shopnest-current");updateUser();toast("You have been logged out.");
+}
+
+render();updateCart();updateUser();
+</script>
+</body>
+</html>
